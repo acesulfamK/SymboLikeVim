@@ -1,5 +1,3 @@
-from sympy import symbols, simplify
-
 class MathEngine:
     def __init__(self):
         # sympyに関連する初期設定
