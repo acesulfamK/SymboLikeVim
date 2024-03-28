@@ -1,4 +1,5 @@
 import curses
+from math_engine import MathEngine
 from editor import Editor
 
 
@@ -7,6 +8,7 @@ class UI:
     mode = "NORMAL"
     cursor_x = 0
     cursor_y = 0
+    command_mode = "normal"  # enter_diff_val, enter_integ_val
 
     def __init__(self):
         editor = Editor()
@@ -76,17 +78,26 @@ class UI:
                     )
                     self.cursor_x += 1
             elif self.mode == "MATH":
-                if key == ord("d"):
+                if self.command_mode == "normal":
+                    if key == ord("d"):
+                        self.command_mode = "enter_diff_val"
+                    elif key == ord("i"):
+                        self.command_mode = "enter_integ_val"
+                    elif key in [ord("h"), ord("j"), ord("k"), ord("l")]:
+                        self.move_cursor(key)
+                    elif key == 27:  # Esc
+                        self.mode = "NORMAL"
+                        curses.curs_set(1)  # ノーマルモードではカーソルを非表示
+                elif self.command_mode == "enter_diff_val":
                     line = self.text[self.cursor_y]
-                    self.text.insert(self.cursor_y, line)
-                elif key == ord("i"):
+                    new_line = MathEngine.diff(line, chr(key))
+                    self.text.insert(self.cursor_y + 1, new_line)
+                    self.command_mode = "normal"
+                elif self.command_mode == "enter_integ_val":
                     line = self.text[self.cursor_y]
-                    self.text.insert(self.cursor_y, line)
-                elif key in [ord("h"), ord("j"), ord("k"), ord("l")]:
-                    self.move_cursor(key)
-                elif key == 27:  # Esc
-                    self.mode = "NORMAL"
-                    curses.curs_set(1)  # ノーマルモードではカーソルを非表示
+                    new_line = MathEngine.integrate(line, chr(key))
+                    self.text.insert(self.cursor_y + 1, new_line)
+                    self.command_mode = "normal"
 
     def move_cursor(self, key):
         if key == ord("h"):
