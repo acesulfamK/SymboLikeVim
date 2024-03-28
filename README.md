@@ -18,3 +18,4 @@ dキーを押すだけで微分ができるようなシステムにしたい。
 - insert, normal, math (m) mode
 - hjkl移動
 - qで終了
+- 微積分: math modeで、"d x", "i x" と書くと、それぞれxで微分、xで積分
